@@ -1,0 +1,3 @@
+NumPy gradient step = ______________________
+PyTorch replacement = ______________________
+One thing that surprised me: ______________________
