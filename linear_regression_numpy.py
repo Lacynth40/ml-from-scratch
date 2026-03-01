@@ -42,16 +42,13 @@ def train(X, y, lr=0.01, epochs=500):
     weights = np.array([0.0])   # fake placeholder
     losses = []                 # empty list for now
      # NEW: run exactly once
-    for _ in range(1):
+    for epoch in range(10):
         y_pred = predict(X, weights)
         loss = mse_loss(y, y_pred)
         grad = compute_gradients(X, y, y_pred)
 
-        print("loss:", loss)
-        print("gradient:", grad)
-
         weights[0] -= lr * grad
-        print("updated weight:", weights[0])
+        print(f"epoch {epoch} | loss: {loss:.4f} | weight: {weights[0]:.4f}")
     return weights, losses
 def main():
     X, y = load_data()
