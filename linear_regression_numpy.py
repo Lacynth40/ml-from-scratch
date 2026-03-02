@@ -11,51 +11,50 @@ def load_data():
         X: (n_samples, n_features)
         y: (n_samples,)
     """
-    # TODO: generate or load simple linear data
-    print("load_data works")
     X = np.array([[1.0], [2.0], [3.0]])
     y = np.array([2.0, 4.0, 6.0])
     return X, y
 
 def predict(X, weights):
     # X @ weights = multiply inputs by weights and sum per row
-    print("predict called")
-    return X @ weights
+    # return X @ weights
+    w, b = weights
+    return X.flatten() * w + b
 
 def mse_loss(y_true, y_pred):
-    print("mse_loss called")
     return np.mean((y_true - y_pred) ** 2)
 
-def compute_gradients(X, y, y_pred):
-    print("compute_gradient called")
-    return np.mean(2 * X.flatten() * (y_pred - y))
+def compute_gradient(X, y, y_pred):
+    error = y_pred - y
+    dw = np.mean(2 * X.flatten() * error)
+    db = np.mean(2 * error)
+    return np.array([dw, db])
 
 def train(X, y, lr=0.01, epochs=500):
-    # TODO:
-    # 1. initialize weights
-    # 2. loop epochs
-    # 3. forward pass
-    # 4. loss
-    # 5. gradients
-    # 6. update weights
-    print("train works")
-    weights = np.array([0.0])   # fake placeholder
-    losses = []                 # empty list for now
-     # NEW: run exactly once
-    for epoch in range(10):
+    weights = np.array([0.0, 0.0])  # [w, b]
+    losses = []
+    for epoch in range(epochs):
         y_pred = predict(X, weights)
         loss = mse_loss(y, y_pred)
-        grad = compute_gradients(X, y, y_pred)
+        grads = compute_gradient(X, y, y_pred)
 
-        weights[0] -= lr * grad
-        print(f"epoch {epoch} | loss: {loss:.4f} | weight: {weights[0]:.4f}")
+        weights -= lr * grads
+        losses.append(loss)
+
+        if epoch % 50 == 0:
+            print(f"epoch {epoch} | loss {loss:.4f} | w {weights[0]:.4f} | b {weights[1]:.4f}")
+
     return weights, losses
+
 def main():
     X, y = load_data()
     weights, losses = train(X, y)
 
+    plt.figure()
     plt.plot(losses)
-    plt.title("NumPy Training Loss")
+    plt.xlabel("Epoch")
+    plt.ylabel("MSE Loss")
+    plt.title("Training Loss")
     plt.show()
 
 if __name__ == "__main__":
