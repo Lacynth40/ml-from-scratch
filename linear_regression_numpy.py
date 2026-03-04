@@ -57,5 +57,16 @@ def main():
     plt.title("Training Loss")
     plt.show()
 
+    # scatter original data
+    plt.scatter(X, y, label="Data")
+
+    # predicted line
+    y_line = predict(X, weights)
+    plt.plot(X, y_line, color="red", label="Model")
+
+    plt.legend()
+    plt.title("Linear Regression Fit")
+    plt.show()
+
 if __name__ == "__main__":
     main()
