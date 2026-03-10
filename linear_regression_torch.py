@@ -1,36 +1,31 @@
 import torch
 import matplotlib.pyplot as plt
+import torch.nn as nn
+import torch.optim as optim
 
 
 def train(X, y, lr=0.01, epochs=500):
-    # Define the parameters.
-    w = torch.tensor([0.0], requires_grad=True)
-    b = torch.tensor([0.0], requires_grad=True)
-
+    model = nn.Linear(1,1)
+    optimizer = optim.SGD(model.parameters(), lr=0.01)
     losses = []
 
-    for epoch in range(epochs):
-        y_pred = predict(X, w, b)
-        loss = mse_loss(y_pred, y)
+    for epoch in range(500):
+
+        y_pred = model(X)
+
+        loss = torch.mean((y_pred - y) ** 2)
+
+        optimizer.zero_grad()
 
         loss.backward()
 
-        with torch.no_grad():
-            w -= lr * w.grad
-            b -= lr * b.grad
-
-        w.grad.zero_()
-        b.grad.zero_()
-
-        losses.append(loss.item())
+        optimizer.step()
 
         if epoch % 50 == 0:
-            print(
-                f"epoch {epoch} | loss {loss.item():.4f} | "
-                f"w {w.item():.4f} | b {b.item():.4f}"
-            )
+            print(epoch, loss.item())
 
-    return w, b, losses
+    return model
+
 
 # Forward pass. Prediction function. 
 def predict(X, w, b):
@@ -50,13 +45,13 @@ def main():
     X = torch.tensor([[1.0], [2.0], [3.0]])
     y = torch.tensor([[2.0], [4.0], [6.0]])
 
-    w, b, losses = train(X, y)
+    model = train(X, y)
 
     # plot predictions
     plt.scatter(X.numpy(), y.numpy(), label="Data")
     plt.plot(
         X.numpy(),
-        predict(X, w, b).detach().numpy(),
+        model(X).detach().numpy(),
         color="red",
         label="Model",
     )
